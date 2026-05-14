@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: beat-box\n"
 "Report-Msgid-Bugs-To: https://github.com/elementary/gala/issues\n"
 "POT-Creation-Date: 2026-05-13 12:04+0000\n"
-"PO-Revision-Date: 2026-02-24 09:55+0000\n"
+"PO-Revision-Date: 2026-05-14 10:12+0000\n"
 "Last-Translator: David M <rbndavid@gmail.com>\n"
 "Language-Team: Catalan <https://l10n.elementaryos.org/projects/desktop/gala/"
 "ca/>\n"
@@ -125,6 +125,7 @@ msgstr "Millores:"
 #: data/gala.metainfo.xml.in:34
 msgid "Fixed a frequent crash with multi monitor setups"
 msgstr ""
+"S'ha corregit un error freqüent amb configuracions de diversos monitors."
 
 #: data/gala.metainfo.xml.in:35 data/gala.metainfo.xml.in:47
 #: data/gala.metainfo.xml.in:65 data/gala.metainfo.xml.in:79
