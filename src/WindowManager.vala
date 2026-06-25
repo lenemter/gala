@@ -18,12 +18,6 @@
 
 namespace Gala {
     public class WindowManagerGala : Meta.Plugin, WindowManager {
-        public enum WindowGroup {
-            DESKTOP_SHELL,
-            MODAL,
-            OVERLAY,
-        }
-
         private const string OPEN_MULTITASKING_VIEW = "dbus-send --session --dest=org.pantheon.gala --print-reply /org/pantheon/gala org.pantheon.gala.PerformAction int32:1";
         private const string OPEN_APPLICATIONS_MENU = "io.elementary.wingpanel --toggle-indicator=app-launcher";
 
@@ -56,6 +50,8 @@ namespace Gala {
         private Clutter.Actor shell_group { get; private set; }
 
         private Clutter.Actor menu_group { get; set; }
+
+        private LockScreen lock_screen;
 
         /**
          * The group that contains all WindowActors that are system modal.
@@ -115,6 +111,8 @@ namespace Gala {
         private DaemonManager daemon_manager;
 
         private NotificationStack notification_stack;
+
+        private LockScreenManager lock_screen_manager;
 
         private Gee.LinkedList<ModalProxy> modal_stack = new Gee.LinkedList<ModalProxy> ();
 
@@ -245,8 +243,11 @@ namespace Gala {
              * +-- multitasking view
              * +-- window switcher
              * +-- window overview
-             * +-- shell group
+             * +-- desktop shell group
              * +-- menu group
+             * +-- lock screen // NOTE: Everything below the lock screen can be accessed without authentication
+             * +---- window group
+             * +---- shell group
              * +-- modal group
              * +-- overlay group (e.g. ibus popup, osk, etc.)
              * +-- feedback group (e.g. DND icons)
@@ -315,6 +316,12 @@ namespace Gala {
 
             menu_group = new Clutter.Actor ();
             ui_group.add_child (menu_group);
+
+            lock_screen = new LockScreen (this);
+            lock_screen.add_constraint (new Clutter.BindConstraint (stage, SIZE, 0));
+            ui_group.add_child (lock_screen);
+
+            lock_screen_manager = new LockScreenManager (lock_screen);
 
             modal_group = new ModalGroup (this, ShellClientsManager.get_instance ());
             modal_group.add_constraint (new Clutter.BindConstraint (stage, SIZE, 0));
@@ -721,10 +728,16 @@ namespace Gala {
         private void on_focus_window_changed () {
             unowned var display = get_display ();
 
-            if (!is_modal () || modal_stack.peek_head ().grab != null || display.focus_window == null ||
-                ShellClientsManager.get_instance ().is_shell_window (display.focus_window)
-            ) {
+            if (!is_modal () || modal_stack.peek_head ().grab != null || display.focus_window == null) {
                 return;
+            }
+
+            if (overridden_window_group.has_key (display.focus_window)) {
+                var overridden_group = overridden_window_group[display.focus_window];
+
+                if (modal_stack.peek_head ().is_window_group_allowed (overridden_group)) {
+                    return;
+                }
             }
 
             display.unset_input_focus (display.get_current_time ());
@@ -1073,6 +1086,8 @@ namespace Gala {
         private Clutter.Actor get_window_group_actor (WindowGroup group) {
             switch (group) {
                 case DESKTOP_SHELL: return shell_group;
+                case LOCK_SCREEN: return lock_screen.window_group;
+                case LOCK_SCREEN_SHELL: return lock_screen.shell_group;
                 case MODAL: return modal_group.window_group;
                 case OVERLAY: return overlay_group;
                 default: assert_not_reached ();
@@ -1099,6 +1114,14 @@ namespace Gala {
 
             if (overridden_window_group.has_key (window)) {
                 /* We found an ancestor with an overridden group so we are now being placed in the same group */
+                return;
+            }
+
+            if (SessionSettings.is_greeter ()) {
+                /* If we are in the greeter only the lock screen group is visible,
+                   so put everything there. This makes sure stuff like initial setup, keyboard layout overview
+                   etc. are still visible */
+                override_window_group (window, LOCK_SCREEN);
                 return;
             }
 

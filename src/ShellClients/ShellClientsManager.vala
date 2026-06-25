@@ -104,14 +104,27 @@ public class Gala.ShellClientsManager : Object, GestureTarget {
             }
 
             try {
+                var type = key_file.get_string (group, "session-type");
+                if (type != SessionSettings.get_shell_clients_type ()) {
+                    continue;
+                }
+            } catch (Error e) {
+                warning ("Failed to check session type for client %s, assuming it should be launched: %s", group, e.message);
+            }
+
+            try {
+                starting_panels += key_file.get_integer (group, "wait-for-n-panels");
+            } catch (Error e) {
+                warning ("Failed to check how many panels should be awaited, assuming 0: %s", e.message);
+            }
+
+            try {
                 var args = key_file.get_string_list (group, "args");
                 protocol_clients += new ManagedClient (wm.get_display (), args);
             } catch (Error e) {
                 warning ("Failed to load launch args for client %s: %s", group, e.message);
             }
         }
-
-        starting_panels = protocol_clients.length;
     }
 
     private void on_failsafe_timeout () {
@@ -180,7 +193,11 @@ public class Gala.ShellClientsManager : Object, GestureTarget {
 
         panel_windows[window] = new PanelWindow (wm, window, anchor);
 
-        wm.override_window_group (window, DESKTOP_SHELL);
+        if (SessionSettings.is_greeter ()) {
+            wm.override_window_group (window, LOCK_SCREEN_SHELL);
+        } else {
+            wm.override_window_group (window, DESKTOP_SHELL);
+        }
 
         InternalUtils.wait_for_window_actor_visible (window, on_panel_ready);
 
