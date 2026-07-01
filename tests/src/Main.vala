@@ -19,8 +19,8 @@ namespace Gala {
 
     private TestCase? get_test_case (string name) {
         Type[] test_types = {
+            typeof (GalaSetupTest),
             typeof (DockTest),
-            // typeof (GalaSetupTest),
         };
 
         foreach (var type in test_types) {

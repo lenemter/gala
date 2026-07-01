@@ -1,6 +1,6 @@
 tests = [
+    'GalaSetupTest',
     'DockTest',
-    # 'GalaSetupTest',
 ]
 
 test_sources = []
