@@ -39,6 +39,7 @@ jobs:
         meson build -Ddocumentation=true -Dtests=true
         ninja -C build
         ninja -C build install
+        ninja -C build uninstall
     - name: Prepare Test Environment
       run: |
         mkdir -p -m 700 ${{ github.workspace }}/runtime-dir
