@@ -10,9 +10,10 @@ foreach test : tests
     test_sources += test + '.vala'
 endforeach
 
-lib_test_sources = [
-    'Main.vala'
-]
+lib_test_sources = files(
+    'MutterTestCase.vala',
+    'Main.vala',
+)
 
 test_executable = executable(
     'io.elementary.gala.tests',
