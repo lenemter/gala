@@ -48,23 +48,13 @@ schemas = custom_target(
     build_by_default: true,
 )
 
-message(meson.current_source_dir ())
-message(meson.current_source_dir ())
-message(meson.current_source_dir ())
-message(meson.current_source_dir ())
-message(meson.current_source_dir ())
-message(meson.current_source_dir ())
-message(meson.current_source_dir ())
-message(meson.current_source_dir ())
-message(meson.current_source_dir ())
-message(meson.current_source_dir ())
 foreach test : tests
     test(
         test,
         test_executable,
         depends: schemas,
         env: {
-            'GSETTINGS_SCHEMA_DIR': meson.current_source_dir (),
+            'GSETTINGS_SCHEMA_DIR': meson.current_build_dir(),
         },
         args: 'Gala' + test,
         suite: ['Gala', 'Gala/bin'],
