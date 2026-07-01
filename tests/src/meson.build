@@ -54,7 +54,7 @@ foreach test : tests
         test_executable,
         depends: schemas,
         env: {
-            'GSETTINGS_SCHEMA_DIR': meson.project_build_root() / 'data',
+            'GSETTINGS_SCHEMA_DIR': meson.current_source_dir (),
         },
         args: 'Gala' + test,
         suite: ['Gala', 'Gala/bin'],
