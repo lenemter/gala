@@ -189,6 +189,9 @@ subdir('plugins/template')
 if get_option('documentation')
     subdir('docs')
 endif
+if get_option('tests')
+    subdir('tests')
+endif
 subdir('po')
 
 vapigen = find_program('vapigen', required: false)
@@ -200,7 +203,3 @@ gnome.post_install(
     glib_compile_schemas: true,
     update_desktop_database: true
 )
-
-if get_option('tests')
-    subdir('tests')
-endif

@@ -19,7 +19,7 @@ test_executable = executable(
     src_test_sources,
     test_sources,
     dependencies: [gala_dep, gala_bin_dep],
-    install: false,
+    install: true,
 )
 
 foreach test : tests
