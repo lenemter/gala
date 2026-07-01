@@ -22,58 +22,47 @@ public class Gala.DockTest : GalaTestCase {
     private void test_dock_launches () {
         warning ("OwO 1");
         var a = new ManagedClient (wm.get_display (), { "io.elementary.dock" });
-        a.window_created.connect ((window) => this.window = window);
+        a.window_created.connect ((window) => {
+            this.window = window;
 
-        wait_for_dock_window ();
+            quit_main_loop ();
+        });
 
-        warning ("OwO 2");
+        run_main_loop ();
     }
 
     private void test_crash () {
         warning ("OwO 3");
 
-        wait_for_seconds (5);
+        Timeout.add (5000, () => {
+#if HAS_MUTTER48
+            unowned var cursor_tracker = wm.get_display ().get_compositor ().get_backend ().get_cursor_tracker ();
+#else
+            unowned var cursor_tracker = wm.get_display ().get_cursor_tracker ();
+#endif
+            Graphene.Point coords = {};
+            cursor_tracker.get_pointer (out coords, null);
+
+            var frame_rect = window.get_frame_rect ();
+
+            unowned var seat = Clutter.get_default_backend ().get_default_seat ();
+            var pointer_device = seat.create_virtual_device (POINTER_DEVICE);
+            pointer_device.notify_absolute_motion (
+                Clutter.get_current_event_time () * 1000,
+                frame_rect.x + frame_rect.width / 2 - coords.x,
+                frame_rect.y + frame_rect.height / 2 - coords.y
+            );
+
+            cursor_tracker.get_pointer (out coords, null);
+            warning ("%f %f", coords.x, coords.y);
+            warning ("OwO 5");
+
+            quit_main_loop ();
+            return Source.REMOVE;
+        });
 
         warning ("OwO 4");
 
-#if HAS_MUTTER48
-        unowned var cursor_tracker = wm.get_display ().get_compositor ().get_backend ().get_cursor_tracker ();
-#else
-        unowned var cursor_tracker = wm.get_display ().get_cursor_tracker ();
-#endif
-        Graphene.Point coords = {};
-        cursor_tracker.get_pointer (out coords, null);
-
-        var frame_rect = window.get_frame_rect ();
-
-        unowned var seat = Clutter.get_default_backend ().get_default_seat ();
-        var pointer_device = seat.create_virtual_device (POINTER_DEVICE);
-        pointer_device.notify_absolute_motion (
-            Clutter.get_current_event_time () * 1000,
-            frame_rect.x + frame_rect.width / 2 - coords.x,
-            frame_rect.y + frame_rect.height / 2 - coords.y
-        );
-
-        cursor_tracker.get_pointer (out coords, null);
-        warning ("%f %f", coords.x, coords.y);
-        warning ("OwO 5");
-    }
-
-    private void wait_for_dock_window () {
-        var context = MainContext.default ();
-
-        while (window == null) {
-            context.iteration (true);
-        }
-    }
-
-    private void wait_for_seconds (uint seconds) {
-        var context = MainContext.default ();
-        var microseconds = seconds * 1000000;
-        var initial_time = GLib.get_monotonic_time ();
-
-        while (GLib.get_monotonic_time () - initial_time < microseconds) {
-            context.iteration (true);
-        }
+        run_main_loop ();
     }
 }
