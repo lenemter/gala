@@ -48,6 +48,16 @@ schemas = custom_target(
     build_by_default: true,
 )
 
+message(meson.current_source_dir ())
+message(meson.current_source_dir ())
+message(meson.current_source_dir ())
+message(meson.current_source_dir ())
+message(meson.current_source_dir ())
+message(meson.current_source_dir ())
+message(meson.current_source_dir ())
+message(meson.current_source_dir ())
+message(meson.current_source_dir ())
+message(meson.current_source_dir ())
 foreach test : tests
     test(
         test,
