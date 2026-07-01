@@ -1,6 +1,6 @@
 tests = [
     'GalaSetupTest',
-    # 'DockTest',
+    'DockTest',
 ]
 
 test_sources = []
@@ -36,8 +36,8 @@ schema_override = configure_file(
     copy: true,
 )
 
-schemas = custom_target(
-    'compile-schemas',
+custom_target(
+    'compile-test-schemas',
     input: [schema_xml, schema_override],
     output: 'gschemas.compiled',
     command: [
@@ -52,7 +52,6 @@ foreach test : tests
     test(
         test,
         test_executable,
-        depends: schemas,
         env: {
             'GSETTINGS_SCHEMA_DIR': meson.current_build_dir(),
         },
@@ -62,4 +61,3 @@ foreach test : tests
         timeout: 60
     )
 endforeach
-
