@@ -34,8 +34,8 @@ public class Gala.DaemonManager : GLib.Object {
         client.window_created.connect ((window) => {
 #if HAS_MUTTER49
             window.set_type (DOCK);
-#elif HAS_MUTTER46
-            client.wayland_client.make_dock (window);
+#else
+            ManagedClient.make_dock (window);
 #endif
             window.notify["title"].connect ((obj, pspec) => handle_daemon_window ((Meta.Window) obj));
         });
@@ -69,8 +69,8 @@ public class Gala.DaemonManager : GLib.Object {
             case "MODAL":
 #if HAS_MUTTER49
                 window.set_type (Meta.WindowType.DOCK);
-#elif HAS_MUTTER46
-                client.wayland_client.make_dock (window);
+#else
+                ManagedClient.make_dock (window);
 #endif
                 window.move_frame (false, 0, 0);
                 window.make_above ();

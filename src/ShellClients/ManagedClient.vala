@@ -15,13 +15,14 @@ public class Gala.ManagedClient : Object {
 
     public Meta.Display display { get; construct; }
     public string[] args { get; construct; }
-
-    public Meta.WaylandClient? wayland_client { get; private set; }
-
-    private Subprocess? subprocess;
+    
+    private static ManagedClient[] instances = {};
+    private Subprocess? subprocess = null;
+    private Meta.WaylandClient? wayland_client = null;
 
     public ManagedClient (Meta.Display display, string[] args) {
         Object (display: display, args: args);
+        instances += this;
     }
 
     construct {
@@ -88,7 +89,17 @@ public class Gala.ManagedClient : Object {
         }
     }
 
-    public void force_exit () {
-        subprocess.force_exit ();
+#if !HAS_MUTTER49
+    public static void make_dock (Meta.Window window) {
+        foreach (unowned var instance in instances) {
+            unowned var wayland_client = instance.wayland_client;
+            if (wayland_client.owns_window (window)) {
+#if HAS_MUTTER46
+                wayland_client.make_dock (window);
+#endif
+                break;
+            }
+        }
     }
+#endif
 }
