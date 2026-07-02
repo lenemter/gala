@@ -25,6 +25,8 @@ public class Gala.ManagedClient : Object {
     }
 
     construct {
+        warning ("launching something");
+
         if (Meta.Util.is_wayland_compositor ()) {
             start_wayland.begin ();
 

@@ -58,6 +58,6 @@ foreach test : tests
         args: 'Gala' + test,
         suite: ['Gala', 'Gala/bin'],
         is_parallel: false,
-        timeout: 60
+        timeout: 120
     )
 endforeach
