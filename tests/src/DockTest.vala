@@ -30,31 +30,31 @@ public class Gala.DockTest : GalaTestCase {
     private void test_crash () {
         wait_for_seconds (5);
 
+        for (var i = 0; i < 5; i++) {
 #if HAS_MUTTER48
-        unowned var cursor_tracker = wm.get_display ().get_compositor ().get_backend ().get_cursor_tracker ();
+            unowned var cursor_tracker = wm.get_display ().get_compositor ().get_backend ().get_cursor_tracker ();
 #else
-        unowned var cursor_tracker = wm.get_display ().get_cursor_tracker ();
+            unowned var cursor_tracker = wm.get_display ().get_cursor_tracker ();
 #endif
-        Graphene.Point coords = {};
-        cursor_tracker.get_pointer (out coords, null);
+            Graphene.Point coords = {};
+            cursor_tracker.get_pointer (out coords, null);
 
-        var frame_rect = window.get_frame_rect ();
+            var frame_rect = window.get_frame_rect ();
 
-        unowned var seat = Clutter.get_default_backend ().get_default_seat ();
-        var pointer_device = seat.create_virtual_device (POINTER_DEVICE);
-        pointer_device.notify_absolute_motion (
-            Clutter.get_current_event_time () * 1000,
-            frame_rect.x + frame_rect.width / 2 - coords.x,
-            frame_rect.y + frame_rect.height / 2 - coords.y
-        );
+            unowned var seat = Clutter.get_default_backend ().get_default_seat ();
+            var pointer_device = seat.create_virtual_device (POINTER_DEVICE);
+            pointer_device.notify_absolute_motion (
+                Clutter.get_current_event_time () * 1000,
+                frame_rect.x + frame_rect.width / 2 - coords.x,
+                frame_rect.y + frame_rect.height / 2 - coords.y
+            );
 
-        wait_for_seconds (1);
+            wait_for_seconds (1);
 
-        Graphene.Point new_coords = {};
-        cursor_tracker.get_pointer (out new_coords, null);
-        assert_true (new_coords.x != coords.x || new_coords.y != coords.y);
+            Graphene.Point new_coords = {};
+            cursor_tracker.get_pointer (out new_coords, null);
+            assert_true (new_coords.x != coords.x || new_coords.y != coords.y);
 
-        for (var i = 0; i < 10; i++) {
             try {
                 var subprocess = new GLib.Subprocess.newv ({ "killall", "io.elementary.dock" }, NONE);
                 subprocess.wait_check (null);
