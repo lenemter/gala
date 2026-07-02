@@ -21,7 +21,7 @@ public class Gala.DockTest : GalaTestCase {
 
     private void test_dock_launches () {
         warning ("OwO 1");
-        var a = new ManagedClient (wm.get_display (), { "io.elementary.dock" });
+        var a = new ManagedClient (wm.get_display (), { "GTK_A11Y=none", "io.elementary.dock" });
         a.window_created.connect ((window) => {
             this.window = window;
 
@@ -61,8 +61,8 @@ public class Gala.DockTest : GalaTestCase {
             return Source.REMOVE;
         });
 
-        warning ("OwO 4");
-
         run_main_loop ();
+
+        warning ("OwO 4");
     }
 }

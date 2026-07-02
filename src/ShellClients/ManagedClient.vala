@@ -24,8 +24,13 @@ public class Gala.ManagedClient : Object {
         Object (display: display, args: args);
     }
 
+    ~ManagedClient () {
+        warning ("Force exit");
+        subprocess.force_exit ();
+    }
+
     construct {
-        warning ("launching something");
+        warning ("launching %s", args[0]);
 
         if (Meta.Util.is_wayland_compositor ()) {
             start_wayland.begin ();
