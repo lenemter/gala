@@ -143,10 +143,6 @@ namespace Gala {
         }
 
         public override void start () {
-            // Force initialization of static fields in Utils class
-            // https://gitlab.gnome.org/GNOME/vala/-/issues/11
-            typeof (Gala.Utils).class_ref ();
-
             input_method = new InputMethod (get_display ());
             Clutter.get_default_backend ().set_input_method (input_method);
 
