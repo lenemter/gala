@@ -58,10 +58,12 @@ public class Gala.DockTest : GalaTestCase {
             try {
                 var subprocess = new GLib.Subprocess.newv ({ "killall", "io.elementary.dock" }, NONE);
                 subprocess.wait_check (null);
+                window = null;
             } catch (Error e) {
                 assert_no_error (e);
             }
 
+            wait_for_dock_window ();
             wait_for_seconds(3);
         }
     }
