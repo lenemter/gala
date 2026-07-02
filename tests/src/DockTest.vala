@@ -54,13 +54,15 @@ public class Gala.DockTest : GalaTestCase {
         cursor_tracker.get_pointer (out new_coords, null);
         assert_true (new_coords.x != coords.x || new_coords.y != coords.y);
 
-        for (var i = 0; i < 5; i++) {
+        for (var i = 0; i < 10; i++) {
             try {
                 var subprocess = new GLib.Subprocess.newv ({ "killall", "io.elementary.dock" }, NONE);
                 subprocess.wait_check (null);
             } catch (Error e) {
                 assert_no_error (e);
             }
+
+            wait_for_seconds(3);
         }
     }
 
