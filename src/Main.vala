@@ -70,10 +70,6 @@ namespace Gala {
             return Posix.EXIT_FAILURE;
         }
 
-        // Force initialization of static fields in Utils class
-        // https://gitlab.gnome.org/GNOME/vala/-/issues/11
-        typeof (Gala.Utils).class_ref ();
-
         try {
             ctx.start ();
 #if HAS_MUTTER50

@@ -49,6 +49,27 @@ public abstract class Gala.GalaTestCase : Gala.TestCase {
 
         context.set_plugin_gtype (typeof (TestWindowManager));
 
+        /* Intercept signals */
+        Posix.sigset_t empty_mask;
+        Posix.sigemptyset (out empty_mask);
+        Posix.sigaction_t act = {};
+        act.sa_handler = Posix.SIG_IGN;
+        act.sa_mask = empty_mask;
+        act.sa_flags = 0;
+
+        if (Posix.sigaction (Posix.Signal.PIPE, act, null) < 0) {
+            warning ("Failed to register SIGPIPE handler: %s", GLib.strerror (GLib.errno));
+        }
+
+        if (Posix.sigaction (Posix.Signal.XFSZ, act, null) < 0) {
+            warning ("Failed to register SIGXFSZ handler: %s", GLib.strerror (GLib.errno));
+        }
+
+        GLib.Unix.signal_add (Posix.Signal.TERM, () => {
+            context.terminate ();
+            return GLib.Source.REMOVE;
+        });
+
         try {
             context.setup ();
         } catch (Error e) {
