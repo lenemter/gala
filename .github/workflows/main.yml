@@ -42,7 +42,7 @@ jobs:
       run: |
         mkdir -p -m 700 ${{ github.workspace }}/runtime-dir
         mkdir -m 1777 /tmp/.X11-unix
-        apt install -y io.elementary.dock
+        apt install -y io.elementary.dock psmisc
     - name: Run Tests
       env:
         XDG_RUNTIME_DIR: ${{ github.workspace }}/runtime-dir

@@ -15,10 +15,10 @@ public class Gala.ManagedClient : Object {
 
     public Meta.Display display { get; construct; }
     public string[] args { get; construct; }
-    
+
     private static ManagedClient[] instances = {};
-    private Subprocess? subprocess = null;
     private Meta.WaylandClient? wayland_client = null;
+    private Subprocess? subprocess = null;
 
     public ManagedClient (Meta.Display display, string[] args) {
         Object (display: display, args: args);

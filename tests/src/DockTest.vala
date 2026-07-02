@@ -39,7 +39,6 @@ public class Gala.DockTest : GalaTestCase {
         cursor_tracker.get_pointer (out coords, null);
 
         var frame_rect = window.get_frame_rect ();
-        warning ("%f %f", coords.x, coords.y);
 
         unowned var seat = Clutter.get_default_backend ().get_default_seat ();
         var pointer_device = seat.create_virtual_device (POINTER_DEVICE);
@@ -51,8 +50,18 @@ public class Gala.DockTest : GalaTestCase {
 
         wait_for_seconds (1);
 
-        cursor_tracker.get_pointer (out coords, null);
-        warning ("%f %f", coords.x, coords.y);
+        Graphene.Point new_coords = {};
+        cursor_tracker.get_pointer (out new_coords, null);
+        assert_true (new_coords.x != coords.x || new_coords.y != coords.y);
+
+        for (var i = 0; i < 5; i++) {
+            try {
+                var subprocess = new GLib.Subprocess.newv ({ "killall", "io.elementary.dock" }, NONE);
+                subprocess.wait_check (null);
+            } catch (Error e) {
+                assert_no_error (e);
+            }
+        }
     }
 
     private void wait_for_dock_window () {
