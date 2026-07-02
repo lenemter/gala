@@ -24,11 +24,6 @@ public class Gala.ManagedClient : Object {
         Object (display: display, args: args);
     }
 
-    ~ManagedClient () {
-        warning ("Force exit");
-        subprocess.force_exit ();
-    }
-
     construct {
         warning ("launching %s", args[0]);
 
@@ -91,5 +86,9 @@ public class Gala.ManagedClient : Object {
         } catch (Error e) {
             warning ("Failed to create daemon subprocess with x: %s", e.message);
         }
+    }
+
+    public void force_exit () {
+        subprocess.force_exit ();
     }
 }

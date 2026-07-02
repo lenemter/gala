@@ -12,6 +12,7 @@
  * and allows us to interact with it, e.g. by creating a Clutter actor.
  */
 public class Gala.DockTest : GalaTestCase {
+    private ManagedClient? managed_client;
     private Meta.Window? window = null;
 
     construct {
@@ -21,8 +22,8 @@ public class Gala.DockTest : GalaTestCase {
 
     private void test_dock_launches () {
         warning ("OwO 1");
-        var a = new ManagedClient (wm.get_display (), { "io.elementary.dock" });
-        a.window_created.connect ((window) => {
+        managed_client = new ManagedClient (wm.get_display (), { "io.elementary.dock" });
+        managed_client.window_created.connect ((window) => {
             this.window = window;
 
             quit_main_loop ();
@@ -56,6 +57,9 @@ public class Gala.DockTest : GalaTestCase {
             cursor_tracker.get_pointer (out coords, null);
             warning ("%f %f", coords.x, coords.y);
             warning ("OwO 5");
+
+            managed_client.force_exit ();
+            managed_client = null;
 
             quit_main_loop ();
             return Source.REMOVE;
