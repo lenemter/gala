@@ -44,6 +44,7 @@ jobs:
       run: |
         mkdir -p -m 700 ${{ github.workspace }}/runtime-dir
         mkdir -m 1777 /tmp/.X11-unix
+        rm /etc/xdg/io.elementary.desktop.wm.shell
         apt install -y io.elementary.dock
     - name: Run Tests
       env:
