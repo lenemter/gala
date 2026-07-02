@@ -48,6 +48,7 @@ jobs:
     - name: Run Tests
       env:
         XDG_RUNTIME_DIR: ${{ github.workspace }}/runtime-dir
+        GTK_A11Y: none
       run: |
         dbus-run-session -- meson test -v -C build
 
