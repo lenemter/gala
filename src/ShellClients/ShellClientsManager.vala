@@ -62,8 +62,8 @@ public class Gala.ShellClientsManager : Object, GestureTarget {
         string? path = null;
         foreach (unowned var dir in config_dirs) {
             var file_path = Path.build_filename (dir, "io.elementary.desktop.wm.shell");
-            warning (file_path);
             if (FileUtils.test (file_path, EXISTS)) {
+                info ("ShellClientsManager: using %s as shell config", file_path);
                 path = file_path;
                 break;
             }
