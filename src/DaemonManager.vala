@@ -25,6 +25,11 @@ public class Gala.DaemonManager : GLib.Object {
         Object (display: display);
     }
 
+    ~DaemonManager () {
+        client.force_exit ();
+        warning ("Exited");
+    }
+
     construct {
         Bus.watch_name (BusType.SESSION, DAEMON_DBUS_NAME, BusNameWatcherFlags.NONE, daemon_appeared, lost_daemon);
 
