@@ -12,7 +12,7 @@
  * and allows us to interact with it, e.g. by creating a Clutter actor.
  */
 public class Gala.DockTest : GalaTestCase {
-    private ManagedClient? managed_client;
+    private ManagedClient managed_client;
     private Meta.Window? window = null;
 
     construct {
@@ -21,7 +21,6 @@ public class Gala.DockTest : GalaTestCase {
     }
 
     private void test_dock_launches () {
-        warning ("OwO 1");
         managed_client = new ManagedClient (wm.get_display (), { "io.elementary.dock" });
         managed_client.window_created.connect ((window) => {
             this.window = window;
@@ -33,9 +32,7 @@ public class Gala.DockTest : GalaTestCase {
     }
 
     private void test_crash () {
-        warning ("OwO 3");
-
-        Timeout.add (5000, () => {
+        Timeout.add (10000, () => {
 #if HAS_MUTTER48
             unowned var cursor_tracker = wm.get_display ().get_compositor ().get_backend ().get_cursor_tracker ();
 #else
@@ -45,6 +42,7 @@ public class Gala.DockTest : GalaTestCase {
             cursor_tracker.get_pointer (out coords, null);
 
             var frame_rect = window.get_frame_rect ();
+            warning ("%f %f", coords.x, coords.y);
 
             unowned var seat = Clutter.get_default_backend ().get_default_seat ();
             var pointer_device = seat.create_virtual_device (POINTER_DEVICE);
@@ -56,17 +54,11 @@ public class Gala.DockTest : GalaTestCase {
 
             cursor_tracker.get_pointer (out coords, null);
             warning ("%f %f", coords.x, coords.y);
-            warning ("OwO 5");
-
-            managed_client.force_exit ();
-            managed_client = null;
 
             quit_main_loop ();
             return Source.REMOVE;
         });
 
         run_main_loop ();
-
-        warning ("OwO 4");
     }
 }
