@@ -62,8 +62,8 @@ public class Gala.ShellClientsManager : Object, GestureTarget {
         string? path = null;
         foreach (unowned var dir in config_dirs) {
             var file_path = Path.build_filename (dir, "io.elementary.desktop.wm.shell");
-            warning (file_path);
             if (FileUtils.test (file_path, EXISTS)) {
+                info ("ShellClientsManager: using %s as shell config", file_path);
                 path = file_path;
                 break;
             }
@@ -143,7 +143,7 @@ public class Gala.ShellClientsManager : Object, GestureTarget {
         window.set_type (Meta.WindowType.DOCK);
 #else
         if (Meta.Util.is_wayland_compositor ()) {
-            make_dock_wayland (window);
+            ManagedClient.make_dock (window);
         } else {
             make_dock_x11 (window);
         }
@@ -151,17 +151,6 @@ public class Gala.ShellClientsManager : Object, GestureTarget {
     }
 
 #if !HAS_MUTTER49
-    private void make_dock_wayland (Meta.Window window) requires (Meta.Util.is_wayland_compositor ()) {
-        foreach (var client in protocol_clients) {
-            if (client.wayland_client.owns_window (window)) {
-#if HAS_MUTTER46
-                client.wayland_client.make_dock (window);
-#endif
-                break;
-            }
-        }
-    }
-
     private void make_dock_x11 (Meta.Window window) requires (!Meta.Util.is_wayland_compositor ()) {
         unowned var x11_display = wm.get_display ().get_x11_display ();
 

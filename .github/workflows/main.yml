@@ -38,14 +38,15 @@ jobs:
       run: |
         meson build -Ddocumentation=true -Dtests=true
         ninja -C build
-        ninja -C build install
     - name: Prepare Test Environment
       run: |
         mkdir -p -m 700 ${{ github.workspace }}/runtime-dir
         mkdir -m 1777 /tmp/.X11-unix
+        apt install -y io.elementary.dock psmisc
     - name: Run Tests
       env:
         XDG_RUNTIME_DIR: ${{ github.workspace }}/runtime-dir
+        GTK_A11Y: none
       run: |
         dbus-run-session -- meson test -v -C build
 
