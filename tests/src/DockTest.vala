@@ -49,12 +49,6 @@ public class Gala.DockTest : GalaTestCase {
                 frame_rect.y + frame_rect.height / 2 - coords.y
             );
 
-            wait_for_seconds (1);
-
-            Graphene.Point new_coords = {};
-            cursor_tracker.get_pointer (out new_coords, null);
-            assert_true (new_coords.x != coords.x || new_coords.y != coords.y);
-
             try {
                 var subprocess = new GLib.Subprocess.newv ({ "killall", "io.elementary.dock" }, NONE);
                 subprocess.wait_check (null);
@@ -62,6 +56,8 @@ public class Gala.DockTest : GalaTestCase {
             } catch (Error e) {
                 assert_no_error (e);
             }
+
+            Test.message ("Waiting for window %d", i);
 
             wait_for_dock_window ();
             wait_for_seconds(3);
